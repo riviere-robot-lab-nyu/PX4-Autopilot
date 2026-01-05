@@ -109,3 +109,9 @@ src/systemcmds/topic_listener/listener_generated.cpp
 # colcon
 log/
 keys/
+px4_ws/
+
+# downloaded files
+*.tar.xz
+*.zip
+Tools/setup/xtensa-esp-elf*
