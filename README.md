@@ -1,15 +1,15 @@
-## Software-In-The-Loop (SITL) with ATMOS and PX4 Autopilot
+# Software-In-The-Loop (SITL) with ATMOS and PX4 Autopilot
 
 To Setup SITL with ATMOS, please follow [this](https://atmos.discower.io/pages/Simulation/). 
 
 
-### SITL with px4-mpc
+## SITL with px4-mpc
 To control ATMOS in simulation, [px4-mpc](https://github.com/riviere-robot-lab-nyu/px4-mpc) is a greate tool to use. Follow the instructions [here](https://github.com/riviere-robot-lab-nyu/px4-mpc?tab=readme-ov-file#setup) to install. 
 
-### SITL with px4-mpc example
+## SITL with px4-mpc example
 To run control in SITL with ATMOS and PX4 Autopilot, you will need at least 3 terminals: **Gazebo** environment that simulates robot and publishing states, **Micro-XRCE-DDS** agent to bridege ROS communication, and a **ros launch file** for mpc control. **[QGroundControl](https://atmos.discower.io/pages/PX4/#setting-up-qgroundcontrol)** might be helpful to change/check modes (offboard) of the robot, but it's not required.
 
-### tmux example for SITL with px4-mpc 
+## tmux example for SITL with px4-mpc 
 ```=shell
 #!/bin/bash
 
@@ -63,7 +63,7 @@ tmux send-keys -t "$SESSION_NAME:0.3" 'ros2 topic echo /pop/fmu/out/vehicle_odom
 tmux attach -t "$SESSION_NAME"
 ```
 
-### Notes
+## Notes
 The main changes of this branch are just modifying ip to local host for SITL with ATMOS. [Check rc.sc_defaults and rc.uuv_defaults](https://github.com/PX4/PX4-Autopilot/compare/main...riviere-robot-lab-nyu:PX4-Autopilot:cpw-sitl-dev#diff-99a020cc41cfc24893ae4039591616722bfca58d798c8fa41a26a341baac9aaf). You can also use the [original repo](https://github.com/riviere-robot-lab-nyu/PX4-Autopilot/tree/main) and change these value manually.  
 
 For general functionailty of PX4 Drone Autopilot, please refer to the [original repo](https://github.com/riviere-robot-lab-nyu/PX4-Autopilot/tree/main).
