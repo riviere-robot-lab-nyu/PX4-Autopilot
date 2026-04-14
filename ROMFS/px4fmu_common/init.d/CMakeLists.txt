@@ -83,12 +83,10 @@ if(CONFIG_MODULES_ROVER_ACKERMANN)
 	)
 endif()
 
-if(CONFIG_MODULES_SPACECRAFT)
-	px4_add_romfs_files(
-		rc.sc_apps
-		rc.sc_defaults
-	)
-endif()
+px4_add_romfs_files(
+	rc.sc_apps
+	rc.sc_defaults
+)
 
 if(CONFIG_MODULES_ROVER_MECANUM)
 	px4_add_romfs_files(

@@ -107,6 +107,8 @@ ControlAllocator::init()
 void
 ControlAllocator::parameters_updated()
 {
+	_motor_max_limit = _param_ca_mot_max_all.get();
+
 	_has_slew_rate = false;
 
 	for (int i = 0; i < MAX_NUM_MOTORS; ++i) {
@@ -514,12 +516,13 @@ ControlAllocator::update_effectiveness_matrix_if_needed(EffectivenessUpdateReaso
 					}
 
 					if (_param_r_rev.get() & (1u << actuator_type_idx)) {
-						minimum[selected_matrix](actuator_idx_matrix[selected_matrix]) = -1.f;
+						minimum[selected_matrix](actuator_idx_matrix[selected_matrix]) = -_motor_max_limit;
 
 					} else {
 						minimum[selected_matrix](actuator_idx_matrix[selected_matrix]) = 0.f;
 					}
 
+					maximum[selected_matrix](actuator_idx_matrix[selected_matrix]) = _motor_max_limit;
 					slew_rate[selected_matrix](actuator_idx_matrix[selected_matrix]) = _params.slew_rate_motors[actuator_type_idx];
 
 				} else if ((ActuatorType)actuator_type == ActuatorType::SERVOS) {
@@ -530,14 +533,14 @@ ControlAllocator::update_effectiveness_matrix_if_needed(EffectivenessUpdateReaso
 					}
 
 					minimum[selected_matrix](actuator_idx_matrix[selected_matrix]) = -1.f;
+					maximum[selected_matrix](actuator_idx_matrix[selected_matrix]) = 1.f;
 					slew_rate[selected_matrix](actuator_idx_matrix[selected_matrix]) = _params.slew_rate_servos[actuator_type_idx];
 					trims.trim[actuator_type_idx] = config.trim[selected_matrix](actuator_idx_matrix[selected_matrix]);
 
 				} else {
 					minimum[selected_matrix](actuator_idx_matrix[selected_matrix]) = -1.f;
+					maximum[selected_matrix](actuator_idx_matrix[selected_matrix]) = 1.f;
 				}
-
-				maximum[selected_matrix](actuator_idx_matrix[selected_matrix]) = 1.f;
 
 				++actuator_idx_matrix[selected_matrix];
 				++actuator_idx;

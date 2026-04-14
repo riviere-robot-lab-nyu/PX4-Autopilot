@@ -173,9 +173,10 @@ if(CONFIG_MODULES_UUV_ATT_CONTROL)
 	)
 endif()
 
-if(CONFIG_MODULES_SPACECRAFT)
-	px4_add_romfs_files(
-		# [70000, 70999] Spacecraft
-		70000_atmos
-	)
-endif()
+px4_add_romfs_files(
+	# [70000, 70999] Spacecraft
+	70000_atmos
+)
+px4_add_romfs_files(
+	70001_samtmos
+)

@@ -1,0 +1,104 @@
+#!/bin/sh
+#
+# @name KTH-ATMOS
+#
+# @type Free-Flyer
+# @class Samtmos_props
+#
+# @output Motor1 front thruster, -y thrust
+# @output Motor2 left thruster, +x thrust
+# @output Motor3 right thruster, -x thrust
+# @output Motor4 back thruster, +y thrust
+#
+# @maintainer DISCOWER
+# @url https://atmos.discower.io
+#
+
+. ${R}etc/init.d/rc.sc_defaults
+set VEHICLE_TYPE mc
+
+# Overwrite DDS AG IP to `192.168.0.1`
+param set-default UXRCE_DDS_AG_IP -1062731775
+
+param set-default CA_AIRFRAME 14
+param set-default MAV_TYPE 45
+
+param set-default CA_ROTOR_COUNT 4
+param set-default CA_R_REV 0
+
+# Auto to be provided by Custom Airframe
+param set-default CA_METHOD 0
+
+# Set proper failsafes
+param set-default COM_ACT_FAIL_ACT 0
+param set-default COM_LOW_BAT_ACT 0
+param set-default NAV_DLL_ACT 0
+param set-default GF_ACTION 1
+param set-default NAV_RCL_ACT 1
+
+# Set Mocap Vision frame
+param set EKF2_EV_CTRL 15
+param set EKF2_HGT_REF 3
+
+# disable attitude failure detection
+param set-default FD_FAIL_P 0
+param set-default FD_FAIL_R 0
+
+param set-default CA_ROTOR0_PX 0.108
+param set-default CA_ROTOR0_PY 0.0
+param set-default CA_ROTOR0_PZ 0.0
+param set-default CA_ROTOR0_CT 1.5
+param set-default CA_ROTOR0_AX 0.0
+param set-default CA_ROTOR0_AY 1.0
+param set-default CA_ROTOR0_AZ 0.0
+
+param set-default CA_ROTOR1_PX 0.0
+param set-default CA_ROTOR1_PY -0.108
+param set-default CA_ROTOR1_PZ 0.0
+param set-default CA_ROTOR1_CT 1.5
+param set-default CA_ROTOR1_AX 1.0
+param set-default CA_ROTOR1_AY 0.0
+param set-default CA_ROTOR1_AZ 0.0
+
+param set-default CA_ROTOR2_PX 0.0
+param set-default CA_ROTOR2_PY 0.108
+param set-default CA_ROTOR2_PZ 0.0
+param set-default CA_ROTOR2_CT 1.5
+param set-default CA_ROTOR2_AX -1.0
+param set-default CA_ROTOR2_AY 0.0
+param set-default CA_ROTOR2_AZ 0.0
+
+param set-default CA_ROTOR3_PX -0.108
+param set-default CA_ROTOR3_PY 0.0
+param set-default CA_ROTOR3_PZ 0.0
+param set-default CA_ROTOR3_CT 1.5
+param set-default CA_ROTOR3_AX 0.0
+param set-default CA_ROTOR3_AY -1.0
+param set-default CA_ROTOR3_AZ 0.0
+
+param set-default PWM_AUX_TIM0 -6
+
+param set-default PWM_AUX_FUNC1 101
+param set-default PWM_AUX_FUNC2 102
+param set-default PWM_AUX_FUNC3 103
+param set-default PWM_AUX_FUNC4 104
+
+# Some DShot schtuff
+param set-default DSHOT_3D_ENABLE 1
+param set-default DSHOT_BIDIR_EDT 1
+param set-default DSHOT_3D_DEAD_L 950
+param set-default DSHOT_3D_DEAD_H 1050
+
+# Controller Tunings
+param set-default SC_ROLLRATE_P 0.14
+param set-default SC_PITCHRATE_P 0.14
+param set-default SC_ROLLRATE_I 0.3
+param set-default SC_PITCHRATE_I 0.3
+param set-default SC_ROLLRATE_D 0.004
+param set-default SC_PITCHRATE_D 0.00
+
+# Get rid of radio errors
+param set-default COM_RC_IN_MODE 1
+param set-default BAT1_N_CELLS 6
+
+

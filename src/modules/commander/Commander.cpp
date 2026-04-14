@@ -2004,6 +2004,14 @@ void Commander::run()
 		_actuator_armed.ready_to_arm = _vehicle_status.pre_flight_checks_pass || isArmed();
 		_actuator_armed.lockdown = _multicopter_throw_launch.isThrowLaunchInProgress();
 		// _actuator_armed.kill // action_request_s::ACTION_KILL
+		// For spacecraft: zero all motor outputs during any active failsafe.
+		// The vehicle stays armed so no rearm is needed when the condition clears.
+		static constexpr uint8_t MAV_TYPE_SPACECRAFT_ORBITER = 45;
+
+		if (_vehicle_status.system_type == MAV_TYPE_SPACECRAFT_ORBITER) {
+			_actuator_armed.kill = _vehicle_status.failsafe;
+		}
+
 		_actuator_armed.termination = (_vehicle_status.nav_state == _vehicle_status.NAVIGATION_STATE_TERMINATION);
 		// _actuator_armed.in_esc_calibration_mode // VEHICLE_CMD_PREFLIGHT_CALIBRATION
 
@@ -2019,6 +2027,21 @@ void Commander::run()
 			// publish actuator_armed first (used by output modules)
 			_actuator_armed.timestamp = hrt_absolute_time();
 			_actuator_armed_pub.publish(_actuator_armed);
+			// Spacecraft (MAV_TYPE_SPACECRAFT_ORBITER = 45) has no concept of landing/takeoff/RTL.
+			// Block these nav states and force loiter to prevent undefined behavior.
+			//static constexpr uint8_t MAV_TYPE_SPACECRAFT_ORBITER = 45;
+
+			//if (_vehicle_status.system_type == MAV_TYPE_SPACECRAFT_ORBITER) {
+				if (_vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_LAND ||
+				    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_TAKEOFF ||
+				    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_VTOL_TAKEOFF ||
+				    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_PRECLAND ||
+				    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_DESCEND ||
+				    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_RTL) {
+					PX4_WARN("Mode rejected for spacecraft! Forcing Loiter/Hold.");
+					_vehicle_status.nav_state = vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER;
+				}
+			//}
 
 			// update and publish vehicle_control_mode
 			updateControlMode();
@@ -2444,6 +2467,25 @@ bool Commander::handleModeIntentionAndFailsafe()
 
 	_vehicle_status.failsafe = _failsafe.inFailsafe();
 	_vehicle_status.failsafe_and_user_took_over = _failsafe.userTakeoverActive();
+
+	// Spacecraft (MAV_TYPE_SPACECRAFT_ORBITER = 45) has no concept of landing/takeoff/RTL.
+	// Intercept here, after the failsafe sets nav_state but before it is used, so the
+	// override sticks every iteration while the failsafe condition is active.
+	// _vehicle_status.failsafe remains true so QGC still reports the condition.
+	static constexpr uint8_t MAV_TYPE_SPACECRAFT_ORBITER = 45;
+
+	if (_vehicle_status.system_type == MAV_TYPE_SPACECRAFT_ORBITER) {
+		if (_vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_LAND ||
+		    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_TAKEOFF ||
+		    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_VTOL_TAKEOFF ||
+		    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_PRECLAND ||
+		    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_DESCEND ||
+		    _vehicle_status.nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_RTL) {
+			PX4_WARN("Mode rejected for spacecraft! Forcing Loiter/Hold.");
+			_vehicle_status.nav_state = vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER;
+			_vehicle_status.nav_state_display = _mode_management.getNavStateDisplay(_vehicle_status.nav_state);
+		}
+	}
 
 	if (prev_nav_state != _vehicle_status.nav_state) {
 		_vehicle_status.nav_state_timestamp = hrt_absolute_time();
