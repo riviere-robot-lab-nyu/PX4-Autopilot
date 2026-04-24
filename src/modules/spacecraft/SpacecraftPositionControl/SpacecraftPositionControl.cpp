@@ -358,8 +358,9 @@ void SpacecraftPositionControl::poll_manual_setpoint(const float dt,
 					const float roll_body = 0.0;
 					const float pitch_body = 0.0;
 
-					Quatf q_sp(Eulerf(roll_body, pitch_body, _manual_yaw_sp));
-					q_sp.copyTo(_setpoint.quaternion);
+					// Quatf q_sp(Eulerf(roll_body, pitch_body, _manual_yaw_sp));
+					// q_sp.copyTo(_setpoint.quaternion);
+					_setpoint.yaw = _manual_yaw_sp;
 
 					_setpoint.timestamp = hrt_absolute_time();
 
@@ -377,7 +378,8 @@ void SpacecraftPositionControl::poll_manual_setpoint(const float dt,
 	}
 }
 
-trajectory_setpoint6dof_s SpacecraftPositionControl::generateFailsafeSetpoint(const hrt_abstime &now,
+// trajectory_setpoint6dof_s SpacecraftPositionControl::generateFailsafeSetpoint(const hrt_abstime &now,
+trajectory_setpoint_s SpacecraftPositionControl::generateFailsafeSetpoint(const hrt_abstime &now,
 		const PositionControlStates &states, bool warn)
 {
 	// rate limit the warnings
@@ -388,7 +390,8 @@ trajectory_setpoint6dof_s SpacecraftPositionControl::generateFailsafeSetpoint(co
 		_last_warn = now;
 	}
 
-	trajectory_setpoint6dof_s failsafe_setpoint = ScPositionControl::empty_trajectory_setpoint;
+	// trajectory_setpoint6dof_s failsafe_setpoint = ScPositionControl::empty_trajectory_setpoint;
+	trajectory_setpoint_s failsafe_setpoint = ScPositionControl::empty_trajectory_setpoint;
 	failsafe_setpoint.timestamp = now;
 
 	failsafe_setpoint.velocity[0] = failsafe_setpoint.velocity[1] = failsafe_setpoint.velocity[2] = 0.f;
